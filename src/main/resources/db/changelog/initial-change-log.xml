@@ -1,0 +1,60 @@
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd
+        http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
+
+    <changeSet author="Slobevg" id="create_accounts_tables">
+        <comment>Create account, account_assets, account_personal_data tables</comment>
+        <createSequence sequenceName="accounts_seq"/>
+        <createSequence sequenceName="account_personal_data_seq"/>
+        <createSequence sequenceName="account_assets_seq"/>
+        <createTable tableName="account_assets">
+            <column name="id" type="bigserial"
+                    autoIncrement="true"
+                    defaultValueSequenceNext="account_assets_seq">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="score" type="decimal" defaultValueNumeric="0">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <createTable tableName="account_personal_data">
+            <column name="id" type="bigserial"
+                    autoIncrement="true"
+                    defaultValueSequenceNext="account_personal_data_seq">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="email" type="text">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <createTable tableName="accounts">
+            <column name="id" type="bigserial"
+                    autoIncrement="true"
+                    defaultValueSequenceNext="accounts_seq">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="assets" type="bigint">
+                <constraints foreignKeyName="fk_account_assets" references="account_assets(id)"
+                             nullable="false"/>
+            </column>
+            <column name="personal_data" type="bigint">
+                <constraints foreignKeyName="fk_account_personal_data" references="account_personal_data(id)"
+                             nullable="false"/>
+            </column>
+        </createTable>
+        <rollback>
+            <dropTable tableName="account"/>
+            <dropSequence sequenceName="account_seq"/>
+            <dropTable tableName="account_personal_data"/>
+            <dropSequence sequenceName="account_personal_data_seq"/>
+            <dropTable tableName="account_assets"/>
+            <dropSequence sequenceName="account_assets_seq"/>
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>
